@@ -24,7 +24,8 @@ const AllTickets = () => {
 
   useEffect(() => {
     loadTickets();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
 
   const deleteTicket = async (id) => {
     await fetch(`http://localhost:8080/api/tickets/${id}`, {

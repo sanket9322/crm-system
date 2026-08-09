@@ -25,7 +25,8 @@ const UpdateUsers = () => {
 
   useEffect(() => {
     loadUsers();
-  }, [id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [id]);
 
   const loadUsers = async () => {
     const res = await getUserById(id);
