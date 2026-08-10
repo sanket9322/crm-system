@@ -1,12 +1,11 @@
 package com.example.demo.security;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collections;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -23,50 +22,77 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    @Autowired
-    private JwtUtils jwtUtil;
+    private final JwtUtils jwtUtil;
+    private final CustomUserDetailsService userDetailsService;
 
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain)
+            throws ServletException, IOException {
 
-	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-			throws ServletException, IOException { 
-		final String authHeader = request.getHeader("Authorization");
+        final String authHeader = request.getHeader("Authorization");
 
-	        String token = null;
-	        String username = null;
-	        String role = null;
+        String username = null;
+        String token = null;
 
-	        // ✅ Extract token
-	        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-	            token = authHeader.substring(7);
+        // -----------------------------------------
+        // Extract JWT
+        // -----------------------------------------
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
 
-	            username = jwtUtil.extractUsername(token);
-	            role = jwtUtil.extractAllClaims(token).get("role", String.class);
-	        }
+            token = authHeader.substring(7);
 
-	        // ✅ Set authentication with role
-	        if (username != null &&
-	                SecurityContextHolder.getContext().getAuthentication() == null) {
+            try {
+                username = jwtUtil.extractUsername(token);
+            } catch (Exception e) {
+                System.out.println("JWT ERROR: " + e.getMessage());
+            }
+        }
 
-	            var userDetails = userDetailsService.loadUserByUsername(username);
+        // -----------------------------------------
+        // Authenticate user
+        // -----------------------------------------
+        if (username != null
+                && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-	            var authorities =
-	                    List.of(new SimpleGrantedAuthority(role));
+            try {
 
-	            UsernamePasswordAuthenticationToken authToken =
-	                    new UsernamePasswordAuthenticationToken(
-	                            userDetails, null, authorities);
+                UserDetails userDetails =
+                        userDetailsService.loadUserByUsername(username);
 
-	            authToken.setDetails(
-	                    new WebAuthenticationDetailsSource().buildDetails(request));
+                if (jwtUtil.isTokenValid(token, userDetails)) {
 
-	            SecurityContextHolder.getContext().setAuthentication(authToken);
-	        }
+                    UsernamePasswordAuthenticationToken authentication =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails,
+                                    null,
+                                    userDetails.getAuthorities()
+                            );
 
-	        filterChain.doFilter(request, response);
-		// TODO Auto-generated method stub
-		
-	}
+                    authentication.setDetails(
+                            new WebAuthenticationDetailsSource()
+                                    .buildDetails(request)
+                    );
+
+                    SecurityContextHolder
+                            .getContext()
+                            .setAuthentication(authentication);
+
+                    System.out.println(
+                            "JWT AUTH SUCCESS: " + username
+                    );
+                }
+
+            } catch (Exception e) {
+
+                System.out.println(
+                        "JWT AUTH ERROR: " + e.getMessage()
+                );
+            }
+        }
+
+        filterChain.doFilter(request, response);
+    }
 }
