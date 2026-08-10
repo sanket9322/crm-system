@@ -11,13 +11,16 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 
 @Component
 public class JwtUtils {
 
-    private final String SECRET_KEY =
-            "MySuperSecretJwtKeyThatIsAtLeast32CharsLong123!";
+    private final String SECRET_KEY;
 
+public JwtUtils(@Value("${jwt.secret}") String secretKey) {
+    this.SECRET_KEY = secretKey;
+}
     private Key getSignKey() {
         return Keys.hmacShaKeyFor(
                 SECRET_KEY.getBytes(StandardCharsets.UTF_8)

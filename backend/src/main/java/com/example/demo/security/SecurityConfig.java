@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,23 +33,24 @@ public class SecurityConfig {
 
             .csrf(csrf -> csrf.disable())
 
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(
+                    SessionCreationPolicy.STATELESS
+                )
             )
 
             .authorizeHttpRequests(auth -> auth
 
-                // Login & Register
+                // Login + Register
                 .requestMatchers("/api/auth/**").permitAll()
 
-                // OPTIONS preflight
-                .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**")
-                .permitAll()
+                // CORS preflight
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                // CRM Email
+                // Email API requires login/JWT
                 .requestMatchers("/api/crm/email/**").authenticated()
 
-                // बाकी सर्व endpoints
+                // All other APIs
                 .anyRequest().authenticated()
             )
 
@@ -91,20 +93,25 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source =
             new UrlBasedCorsConfigurationSource();
 
-        source.registerCorsConfiguration("/**", config);
+        source.registerCorsConfiguration(
+            "/**",
+            config
+        );
 
         return source;
     }
 
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration config) throws Exception {
+            AuthenticationConfiguration config)
+            throws Exception {
 
         return config.getAuthenticationManager();
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
+
         return new BCryptPasswordEncoder();
     }
 }

@@ -1,24 +1,21 @@
 package com.example.demo.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.EmailLog;
 import com.example.demo.repository.EmailLogRepository;
 
 import jakarta.mail.internet.MimeMessage;
-
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class CrmEmailService {
 
-    @Autowired
-    private JavaMailSender mailSender;
-
-    @Autowired
-    private EmailLogRepository emailLogRepo;
+    private final JavaMailSender mailSender;
+    private final EmailLogRepository emailLogRepo;
 
     public void sendCrmEmail(
             String to,
@@ -35,79 +32,50 @@ public class CrmEmailService {
 
         try {
 
-            // Create email message
-            MimeMessage message = mailSender.createMimeMessage();
+            System.out.println("=================================");
+            System.out.println("EMAIL START");
+            System.out.println("TO: " + to);
+            System.out.println("SUBJECT: " + subject);
+            System.out.println("MODULE: " + module);
+            System.out.println("=================================");
+
+            MimeMessage message =
+                mailSender.createMimeMessage();
 
             MimeMessageHelper helper =
-                    new MimeMessageHelper(
-                            message,
-                            true,
-                            "UTF-8"
-                    );
+                new MimeMessageHelper(
+                    message,
+                    false,
+                    "UTF-8"
+                );
 
-            // Recipient
             helper.setTo(to);
-
-            // Subject
             helper.setSubject(subject);
+            helper.setText(body, false);
 
-            // Email body
-            helper.setText(body, true);
-
-            // Send email
             mailSender.send(message);
 
-            // Save successful log
             log.setStatus("SENT");
             emailLogRepo.save(log);
 
-            System.out.println(
-                    "======================================"
-            );
-            System.out.println(
-                    "EMAIL SENT SUCCESSFULLY"
-            );
-            System.out.println(
-                    "TO: " + to
-            );
-            System.out.println(
-                    "SUBJECT: " + subject
-            );
-            System.out.println(
-                    "MODULE: " + module
-            );
-            System.out.println(
-                    "======================================"
-            );
+            System.out.println("EMAIL SENT SUCCESSFULLY");
 
         } catch (Exception e) {
 
-            // Save failed log
             log.setStatus("FAILED");
             emailLogRepo.save(log);
 
-            System.err.println(
-                    "======================================"
-            );
-            System.err.println(
-                    "EMAIL SENDING FAILED"
-            );
-            System.err.println(
-                    "TO: " + to
-            );
-            System.err.println(
-                    "ERROR: " + e.getMessage()
-            );
-            System.err.println(
-                    "======================================"
-            );
+            System.err.println("=================================");
+            System.err.println("EMAIL FAILED");
+            System.err.println("TO: " + to);
+            System.err.println("ERROR: " + e.getMessage());
+            System.err.println("=================================");
 
             e.printStackTrace();
 
-            // Important:
-            // Don't return success if email actually failed
             throw new RuntimeException(
-                    "Email sending failed: " + e.getMessage()
+                "SMTP email sending failed: "
+                + e.getMessage()
             );
         }
     }
