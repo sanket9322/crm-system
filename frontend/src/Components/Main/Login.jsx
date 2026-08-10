@@ -78,7 +78,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:8080/api/auth/login", {
+      const res = await axios.post("https://crm-system-production-9f24.up.railway.app/api/auth/login", {
         email: user.email,
         password: user.password,
       });

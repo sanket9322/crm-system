@@ -102,7 +102,7 @@ const Registration = () => {
     try {
       // ✅ FIXED: Was calling POST /api/users (requires auth → 403).
       //           Now correctly calls POST /api/auth/register (public endpoint).
-      await axios.post("http://localhost:8080/api/auth/register", user);
+      await axios.post("https://crm-system-production-9f24.up.railway.app/api/auth/register", user);
       alert("Registration successful! Please login.");
       navigate("/");
     } catch (err) {
