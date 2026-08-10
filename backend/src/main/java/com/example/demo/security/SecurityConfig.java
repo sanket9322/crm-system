@@ -28,34 +28,30 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-            // CORS
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-            // CSRF disabled because we are using JWT
             .csrf(csrf -> csrf.disable())
 
-            // Stateless JWT authentication
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
 
-            // Authorization
             .authorizeHttpRequests(auth -> auth
 
-                // Allow CORS preflight requests
+                // Login & Register
+                .requestMatchers("/api/auth/**").permitAll()
+
+                // OPTIONS preflight
                 .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**")
                 .permitAll()
 
-                // Login & Register are public
-                .requestMatchers("/api/auth/**")
-                .permitAll()
+                // CRM Email
+                .requestMatchers("/api/crm/email/**").authenticated()
 
-                // Everything else requires JWT
-                .anyRequest()
-                .authenticated()
+                // बाकी सर्व endpoints
+                .anyRequest().authenticated()
             )
 
-            // JWT filter
             .addFilterBefore(
                 jwtAuthFilter,
                 UsernamePasswordAuthenticationFilter.class
@@ -69,14 +65,12 @@ public class SecurityConfig {
 
         CorsConfiguration config = new CorsConfiguration();
 
-        // Frontend URLs
         config.setAllowedOrigins(List.of(
             "http://localhost:3000",
             "http://localhost:3001",
             "https://zestful-rebirth-production-c8ed.up.railway.app"
         ));
 
-        // HTTP methods
         config.setAllowedMethods(List.of(
             "GET",
             "POST",
@@ -85,10 +79,13 @@ public class SecurityConfig {
             "OPTIONS"
         ));
 
-        // Request headers
-        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedHeaders(List.of(
+            "Authorization",
+            "Content-Type",
+            "Accept",
+            "Origin"
+        ));
 
-        // Allow JWT credentials
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
@@ -108,7 +105,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-
         return new BCryptPasswordEncoder();
     }
 }
