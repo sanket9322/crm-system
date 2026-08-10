@@ -15,7 +15,7 @@ const Feedback = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:8080/api/feedbacks", {
+      const res = await fetch("https://crm-system-production-9f24.up.railway.app/api/feedbacks", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"

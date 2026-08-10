@@ -51,7 +51,7 @@ src/
 
 - Node.js 16+
 - npm 8+
-- [crm-backend](https://github.com/sanket9322/crm-backend) running on `http://localhost:8080`
+- [crm-backend](https://github.com/sanket9322/crm-backend) running on `https://crm-system-production-9f24.up.railway.app`
 
 ---
 
@@ -75,7 +75,7 @@ npm install
 If your backend runs on a different port or host, update the base URL in `src/services/` or create a `.env` file:
 
 ```env
-REACT_APP_API_URL=http://localhost:8080
+REACT_APP_API_URL=https://crm-system-production-9f24.up.railway.app
 ```
 
 ### 4. Start the development server

@@ -95,7 +95,7 @@ function UpdateLead() {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await axios.get(`http://localhost:8080/api/leads/${id}`, {
+        const res = await axios.get(`https://crm-system-production-9f24.up.railway.app/api/leads/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -120,7 +120,7 @@ function UpdateLead() {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.put(`http://localhost:8080/api/leads/${id}`, lead, {
+      await axios.put(`https://crm-system-production-9f24.up.railway.app/api/leads/${id}`, lead, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

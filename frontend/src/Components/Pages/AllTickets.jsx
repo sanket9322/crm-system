@@ -14,7 +14,7 @@ const AllTickets = () => {
   };
 
   const loadTickets = () => {
-    fetch("http://localhost:8080/api/tickets", {
+    fetch("https://crm-system-production-9f24.up.railway.app/api/tickets", {
       headers: getHeaders()
     })
       .then(res => res.json())
@@ -28,7 +28,7 @@ const AllTickets = () => {
 }, []);
 
   const deleteTicket = async (id) => {
-    await fetch(`http://localhost:8080/api/tickets/${id}`, {
+    await fetch(`https://crm-system-production-9f24.up.railway.app/api/tickets/${id}`, {
       method: "DELETE",
       headers: getHeaders()
     });

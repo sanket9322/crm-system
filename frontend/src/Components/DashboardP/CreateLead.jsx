@@ -99,7 +99,7 @@ const CreateLead = () => {
     try {
       // ✅ FIX 2: Send JWT token in Authorization header
       const token = localStorage.getItem("token");
-      await axios.post("http://localhost:8080/api/leads", lead, {
+      await axios.post("https://crm-system-production-9f24.up.railway.app/api/leads", lead, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json"

@@ -94,7 +94,7 @@ const OpenLead = () => {
 
   const fetchLeads = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/leads");
+      const res = await axios.get("https://crm-system-production-9f24.up.railway.app/api/leads");
       const filtered = res.data.filter(lead => lead.status.toLowerCase() === "open");
       setLeads(filtered);
     } catch (error) {

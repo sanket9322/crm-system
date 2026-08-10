@@ -139,7 +139,7 @@ const AllLead = () => {
 
   const fetchLeads = async () => {
     try {
-      const res = await axios.get("http://localhost:8080/api/leads", {
+      const res = await axios.get("https://crm-system-production-9f24.up.railway.app/api/leads", {
         headers: getAuthHeaders()
       });
       setLeads(res.data);
@@ -150,7 +150,7 @@ const AllLead = () => {
 
   const deleteLead = async (id) => {
     try {
-      await axios.delete(`http://localhost:8080/api/leads/${id}`, {
+      await axios.delete(`https://crm-system-production-9f24.up.railway.app/api/leads/${id}`, {
         headers: getAuthHeaders()
       });
       fetchLeads();

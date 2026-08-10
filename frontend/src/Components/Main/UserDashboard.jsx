@@ -60,7 +60,7 @@ const UserDashboard = () => {
   useEffect(() => {
     const fetchLeads = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/leads");
+        const res = await axios.get("https://crm-system-production-9f24.up.railway.app/api/leads");
         setLeads(res.data);
       } catch (error) {
         console.error("Error fetching leads:", error);

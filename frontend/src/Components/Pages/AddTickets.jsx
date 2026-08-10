@@ -100,7 +100,7 @@ const AddTickets = () => {
     try {
       // ✅ FIX: Send JWT token in Authorization header
       const token = localStorage.getItem("token");
-      await fetch("http://localhost:8080/api/tickets", {
+      await fetch("https://crm-system-production-9f24.up.railway.app/api/tickets", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

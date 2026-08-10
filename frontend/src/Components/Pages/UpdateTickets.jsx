@@ -13,7 +13,7 @@ const UpdateTickets = () => {
   });
 
   useEffect(() => {
-    fetch(`http://localhost:8080/api/tickets/${id}`)
+    fetch(`https://crm-system-production-9f24.up.railway.app/api/tickets/${id}`)
       .then(res => res.json())
       .then(data => setTicket(data));
   }, [id]);
@@ -25,7 +25,7 @@ const UpdateTickets = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
 
-    await fetch(`http://localhost:8080/api/tickets/${id}`, {
+    await fetch(`https://crm-system-production-9f24.up.railway.app/api/tickets/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(ticket)

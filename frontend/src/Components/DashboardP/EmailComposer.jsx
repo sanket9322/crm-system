@@ -108,7 +108,7 @@ function EmailComposer() {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.post("http://localhost:8080/api/crm/email/send", params, {
+      await axios.post("https://crm-system-production-9f24.up.railway.app/api/crm/email/send", params, {
         headers: { Authorization: `Bearer ${token}` }
       });
       alert("Email sent from CRM!");

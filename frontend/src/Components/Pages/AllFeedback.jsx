@@ -66,7 +66,7 @@ const AllFeedback = () => {
     try {
       // ✅ FIX: Add JWT token to request
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:8080/api/feedbacks", {
+      const res = await fetch("https://crm-system-production-9f24.up.railway.app/api/feedbacks", {
         headers: {
           "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {})
