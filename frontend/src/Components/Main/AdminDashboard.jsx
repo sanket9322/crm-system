@@ -143,10 +143,10 @@ const DashboardOverview = () => {
     const headers = { Authorization: `Bearer ${token}` };
 
     Promise.all([
-      fetch("http://localhost:8080/api/users", { headers }).then(r => r.json()),
-      fetch("http://localhost:8080/api/leads", { headers }).then(r => r.json()),
-      fetch("http://localhost:8080/api/tickets", { headers }).then(r => r.json()),
-      fetch("http://localhost:8080/api/feedbacks", { headers }).then(r => r.json()),
+      fetch("https://crm-system-production-9f24.up.railway.app/api/users", { headers }).then(r => r.json()),
+      fetch("https://crm-system-production-9f24.up.railway.app/api/leads", { headers }).then(r => r.json()),
+      fetch("https://crm-system-production-9f24.up.railway.app/api/tickets", { headers }).then(r => r.json()),
+      fetch("https://crm-system-production-9f24.up.railway.app/api/feedbacks", { headers }).then(r => r.json()),
     ]).then(([customers, leads, tickets, feedbacks]) => {
       setCounts({
         customers: customers.length,
