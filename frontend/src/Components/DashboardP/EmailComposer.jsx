@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
 
-// --- Inline Style Objects ---
 const styles = {
   wrapper: {
     display: "flex",
@@ -89,7 +88,6 @@ const styles = {
     border: "none",
     borderRadius: "6px",
     cursor: "pointer",
-    transition: "background-color 0.2s ease",
   },
 };
 
@@ -113,22 +111,21 @@ function EmailComposer() {
 
     e.preventDefault();
 
-    const token = localStorage.getItem("token");
-
-    // Check JWT token
-    if (!token) {
-      alert("Please login first.");
-      return;
-    }
-
-    const params = new URLSearchParams();
-
-    params.append("to", form.to);
-    params.append("subject", form.subject);
-    params.append("body", form.body);
-    params.append("module", form.module);
-
     try {
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        alert("Please login again.");
+        return;
+      }
+
+      const params = new URLSearchParams();
+
+      params.append("to", form.to);
+      params.append("subject", form.subject);
+      params.append("body", form.body);
+      params.append("module", form.module);
 
       const response = await axios.post(
         "https://crm-system-production-9f24.up.railway.app/api/crm/email/send",
@@ -141,7 +138,7 @@ function EmailComposer() {
         }
       );
 
-      console.log("Email Response:", response.data);
+      console.log("Email response:", response.data);
 
       alert("Email sent successfully!");
 
@@ -154,41 +151,30 @@ function EmailComposer() {
 
     } catch (error) {
 
-      console.error("Email Error:", error);
+      console.error("Email sending error:", error);
 
       if (error.response) {
 
         console.error(
-          "Status:",
+          "Backend status:",
           error.response.status
         );
 
         console.error(
-          "Response:",
+          "Backend response:",
           error.response.data
         );
 
-        if (error.response.status === 401) {
-          alert("Session expired. Please login again.");
-        }
-
-        else if (error.response.status === 403) {
-          alert("Access denied. Please login again.");
-        }
-
-        else if (error.response.status === 500) {
-          alert("Server error. Check backend email/SMTP configuration.");
-        }
-
-        else {
-          alert(
-            `Failed to send email. Error: ${error.response.status}`
-          );
-        }
+        alert(
+          "Email failed: " +
+          (error.response.data || "Server error")
+        );
 
       } else {
 
-        alert("Network error. Please check backend connection.");
+        alert(
+          "Email failed. Please check backend/server."
+        );
       }
     }
   };
@@ -207,7 +193,6 @@ function EmailComposer() {
           onSubmit={sendEmail}
         >
 
-          {/* CRM Module */}
           <span style={styles.label}>
             Related CRM Module
           </span>
@@ -218,6 +203,7 @@ function EmailComposer() {
             value={form.module}
             onChange={handleChange}
           >
+
             <option value="LEAD">
               Lead
             </option>
@@ -229,9 +215,9 @@ function EmailComposer() {
             <option value="CUSTOMER">
               Customer
             </option>
+
           </select>
 
-          {/* Recipient */}
           <input
             style={styles.input}
             type="email"
@@ -242,7 +228,6 @@ function EmailComposer() {
             required
           />
 
-          {/* Subject */}
           <input
             style={styles.input}
             type="text"
@@ -253,7 +238,6 @@ function EmailComposer() {
             required
           />
 
-          {/* Email Body */}
           <textarea
             style={styles.textarea}
             name="body"
@@ -263,7 +247,6 @@ function EmailComposer() {
             required
           />
 
-          {/* Send Button */}
           <button
             type="submit"
             style={styles.submitBtn}
